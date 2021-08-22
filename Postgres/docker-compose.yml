@@ -1,0 +1,51 @@
+# Um Docker Compose deve sempre começar com a versão da tag.
+# Usei '3.8' porque é a última versão.
+version: "3.8"
+
+# Você deve saber que o Docker Compose funciona com serviços.
+# 1 serviço = 1 contêiner.
+# Por exemplo, um serviço, um servidor, um cliente, um banco de dados ...
+# Usamos a palavra-chave 'services' para começar a criar serviços.
+services:
+  # O nome do nosso serviço é "database"
+  # mas você pode usar o nome de sua escolha.
+  # Nota: Isso pode alterar um pouco os comandos que você usará.
+  database:
+    # Imagem oficial do Postgres do DockerHub (usei a última versão)
+    image: "postgres:latest"
+
+	 # Por padrão, um banco de dados Postgres está sendo executado na porta 5432.
+    # Se quisermos acessar o banco de dados de nosso computador (fora do contêiner),
+    # devemos compartilhar a porta com a porta do nosso computador.
+    # A sintaxe é [porta que queremos em nossa máquina]: [porta que queremos recuperar no contêiner]
+    # Nota: Você está livre para mudar a porta do seu computador,
+    # mas leve em consideração que isso mudará a maneira
+    # você está se conectando ao seu banco de dados.
+    ports:
+      - 5432:5432
+
+    environment:
+      POSTGRES_USER: usuario # O usuário PostgreSQL (útil para se conectar ao banco de dados)
+      POSTGRES_PASSWORD: senha # A senha do PostgreSQL (útil para se conectar ao banco de dados)
+      POSTGRES_DB: default_database # O banco de dados padrão PostgreSQL (criado automaticamente na primeira inicialização)
+
+    ####
+    ## Se você deseja usar um arquivo `.env`, por favor, comente a seção` ambiente`.
+    ####
+
+    # A tag `env_file` nos permite declarar um arquivo de ambiente
+    #env_file:
+    #  - .env # TO nome do seu arquivo de ambiente (aquele na raiz do repositório)
+
+    ####
+    ## Se você deseja manter os dados do banco de dados, descomente as linhas abaixo.
+    ####
+
+    # A tag `volumes` nos permite compartilhar uma pasta com nosso contêiner.
+    # Sua sintaxe é a seguinte: [caminho da pasta em nossa máquina]: [caminho da pasta para recuperar no contêiner]
+    volumes:
+		# Neste exemplo, compartilhamos a pasta `db-data` em nosso repositório raiz, com o caminho de dados PostgreSQL padrão.
+      # Isso significa que toda vez que o repositório está modificando os dados dentro
+      # de '/var/lib/postgresql/data/', automaticamente a mudança aparecerá em 'db-data'.
+      # Você não precisa criar a pasta `db-data`. O Docker Compose fará isso por você.
+      - /home/edenalencar/Docker/Postgres/db-data/:/var/lib/postgresql/data/
