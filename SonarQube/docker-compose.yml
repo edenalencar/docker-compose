@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  sonarqube:
+    image: sonarqube:community
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
+      SONAR_JDBC_USERNAME: usuario
+      SONAR_JDBC_PASSWORD: senha
+    volumes:
+      - /home/edenalencar/Docker/SonarQube/sonarqube_conf:/opt/sonarqube/conf
+      - /home/edenalencar/Docker/SonarQube/sonarqube_data:/opt/sonarqube/data
+      - /home/edenalencar/Docker/SonarQube/sonarqube_extensions:/opt/sonarqube/extensions
+      - /home/edenalencar/Docker/SonarQube/sonarqube_logs:/opt/sonarqube/logs
+      - /home/edenalencar/Docker/SonarQube/sonarqube_bundled-plugins:/opt/sonarqube/lib/bundled-plugins
+    ports:
+      - "9001:9000"
+  db:
+    image: postgres:latest    
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: senha
+      POSTGRES_DB: sonarqube
+    volumes:
+      - /home/edenalencar/Docker/Postgres/postgresql:/var/lib/postgresql
+      - /home/edenalencar/Docker/Postgres/db-data/:/var/lib/postgresql/data
+volumes:
+  sonarqube_bundled-plugins:
+  sonarqube_conf:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
+  postgresql:
+  postgresql_data:
